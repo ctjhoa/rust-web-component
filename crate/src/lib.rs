@@ -27,20 +27,23 @@ cfg_if! {
     }
 }
 
-// Called by our JS entry point to run the example.
 #[wasm_bindgen]
-pub fn run() -> Result<(), JsValue> {
-    set_panic_hook();
+pub struct RustCustomElement {
+    contents: u32,
+}
 
-    let window = web_sys::window().expect("should have a Window");
-    let document = window.document().expect("should have a Document");
+#[wasm_bindgen]
+impl RustCustomElement {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> RustCustomElement {
+        RustCustomElement { contents: 0 }
+    }
 
-    let p: web_sys::Node = document.create_element("p")?.into();
-    p.set_text_content(Some("Hello from Rust, WebAssembly, and Webpack!"));
+    pub fn get_contents(&self) -> u32 {
+        self.contents
+    }
 
-    let body = document.body().expect("should have a body");
-    let body: &web_sys::Node = body.as_ref();
-    body.append_child(&p)?;
-
-    Ok(())
+    pub fn inc_contents(&mut self) {
+        self.contents = self.contents + 1;
+    }
 }
